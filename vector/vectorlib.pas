@@ -16,6 +16,9 @@ interface
 			function prev(): Iterator;
 			function data(): integer;
 			function equal(it: Iterator): boolean;
+
+		private
+			function raw(): pint;
 		end;
 
 		Vector = class
@@ -30,6 +33,7 @@ interface
 			function finish(): Iterator;
 			function at(num: integer): integer;
 			procedure push_back(element: integer);
+			procedure insert(p: Iterator; element: integer);
 		end;
 implementation
 
@@ -53,6 +57,11 @@ begin
 	data := raw_data^;
 end;
 
+function Iterator.raw(): pint;
+begin
+	raw := raw_data;
+end;
+
 function Iterator.equal(it: Iterator): boolean;
 begin
 	equal := (raw_data = it.raw_data);
@@ -73,6 +82,28 @@ begin
 	end;
 	data[length] := element;
 	length := length + 1;
+end;
+
+procedure Vector.insert(p: Iterator; element: integer);
+var
+	tail: Iterator;
+begin
+	if length = capacity then
+	begin
+		capacity := 3 * capacity div 2 + 1;
+		setLength(data, capacity);
+	end;
+	length := length + 1;
+
+	tail := finish();
+
+	while not tail.equal(p) do
+	begin
+		tail.raw()^ := tail.prev().data();
+		tail := tail.prev();
+	end;
+	
+	p.raw()^ := element;
 end;
 
 function Vector.start(): Iterator;
