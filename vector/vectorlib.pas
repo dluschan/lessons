@@ -16,8 +16,6 @@ interface
 			function prev(): Iterator;
 			function data(): integer;
 			function equal(it: Iterator): boolean;
-
-		private
 			function raw(): pint;
 		end;
 
