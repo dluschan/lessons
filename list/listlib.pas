@@ -103,14 +103,25 @@ implementation
 		if head = tail then
 		begin
 			new(pelement);
+			pelement^ := element;
 			head := Iterator.create(pelement);
 			head.setNext(tail);
-			tail.setPrev(tail);
+			tail.setPrev(head);
+			exit();
+		end;
+		if p = head then
+		begin
+			new(pelement);
+			pelement^ := element;
+			head := Iterator.create(pelement);
+			head.setNext(p);
+			p.setPrev(head);
 		end
 		else
 		begin
 			prevIt := p.prev();
 			new(pelement);
+			pelement^ := element;
 			currentIt := Iterator.create(pelement);
 			prevIt.setNext(currentIt);
 			currentIt.setNext(p);
