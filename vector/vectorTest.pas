@@ -4,7 +4,6 @@ uses
 var
 	m: Vector;
 	a, b: Iterator;
-	t: ^integer;
 
 begin
 	m := Vector.create();
@@ -25,5 +24,4 @@ begin
 		a := a.next();
 	end;
 	writeln();
-	writeln(m.at(2));
 end.
