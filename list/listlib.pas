@@ -38,6 +38,7 @@ interface
 			function finish(): Iterator;
 
 			function at(num: integer): integer;
+			function empty(): boolean;
 
 			procedure push_back(element: integer);
 			procedure insert(p: Iterator; element: integer);
@@ -141,7 +142,20 @@ implementation
 	end;
 
 	function List.at(num: integer): integer;
+	var
+		it: Iterator;
 	begin
-		at := 0;
+		it := start();
+		while num > 0 do
+		begin
+			num := num - 1;
+			it := it.next();
+		end;
+		at := it.data();
+	end;
+	
+	function List.empty(): boolean;
+	begin
+		empty := (head = tail);
 	end;
 end.
