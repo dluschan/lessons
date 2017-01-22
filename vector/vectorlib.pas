@@ -35,6 +35,7 @@ interface
 			function finish(): Iterator;
 
 			function at(num: integer): integer;
+			function empty(): boolean;
 
 			procedure push_back(element: integer);
 			procedure insert(p: Iterator; element: integer);
@@ -79,19 +80,16 @@ implementation
 
 	procedure Vector.push_back(element: integer);
 	begin
-		if length = capacity then
-		begin
-			capacity := 3 * capacity div 2 + 1;
-			setLength(data, capacity);
-		end;
-		data[length] := element;
-		length := length + 1;
+		insert(finish(), element);
 	end;
 
 	procedure Vector.insert(p: Iterator; element: integer);
 	var
 		tail: Iterator;
+		index, i: integer;
 	begin
+		index := p.raw() - start().raw();
+		
 		if length = capacity then
 		begin
 			capacity := 3 * capacity div 2 + 1;
@@ -99,15 +97,10 @@ implementation
 		end;
 		length := length + 1;
 
-		tail := finish();
+		for i := length downto index + 1 do
+			data[i] := data[i-1];
 
-		while not tail.equal(p) do
-		begin
-			tail.raw()^ := tail.prev().data();
-			tail := tail.prev();
-		end;
-	
-		p.raw()^ := element;
+		data[index] := element;
 	end;
 
 	function Vector.start(): Iterator;
@@ -123,5 +116,10 @@ implementation
 	function Vector.at(num: integer): integer;
 	begin
 		at := data[num];
+	end;
+
+	function Vector.empty(): boolean;
+	begin
+		empty := (length = 0);
 	end;
 end.
