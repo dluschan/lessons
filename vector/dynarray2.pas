@@ -3,7 +3,7 @@ type
 	vector = array of integer;
 var
 	m: vector;
-	n: integer;
+	i, n: integer;
 	a, b: ^integer;
 begin
 	n := 10;
