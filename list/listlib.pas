@@ -41,6 +41,7 @@ interface
 
 			function at(num: longInt): longInt;
 			function empty(): boolean;
+			function size(): longInt;
 
 			procedure push_back(element: longInt);
 			function  pop_back(): longInt;
@@ -200,5 +201,20 @@ implementation
 	function List.empty(): boolean;
 	begin
 		empty := (head = tail);
+	end;
+
+	function List.size(): longInt;
+	var
+		p: iterator;
+		k: longInt;
+	begin
+		p := start();
+		k := 0;
+		while p <> finish() do
+		begin
+			k := k + 1;
+			p := p.next();
+		end;
+		size := k;
 	end;
 end.
