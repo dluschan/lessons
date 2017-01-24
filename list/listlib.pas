@@ -34,6 +34,7 @@ interface
 
 		public
 			constructor create();
+			destructor  destroy();
 
 			function start(): Iterator;
 			function finish(): Iterator;
@@ -96,8 +97,16 @@ implementation
 
 	constructor List.create();
 	begin
-		tail := Iterator.create(nil);
+		tail := Iterator.create(0);
 		head := tail;
+	end;
+
+	destructor List.destroy();
+	begin
+		writeln('Delete list');
+		while not empty() do
+			erase(start());
+		tail.destroy();
 	end;
 
 	procedure List.push_back(element: longInt);
@@ -119,7 +128,7 @@ implementation
 		prevIt, currentIt: Iterator;
 	begin
 		currentIt := Iterator.create(element);
-		if head = tail then
+		if empty() then
 		begin
 			head := currentIt;
 			head.setNext(tail);
@@ -149,7 +158,7 @@ implementation
 	begin
 		if p = tail then
 			exit();
-		if p = head then
+		if p = start() then
 		begin
 			prevIt := head;
 			head := head.next();
