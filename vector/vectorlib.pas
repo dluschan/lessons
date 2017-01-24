@@ -4,7 +4,7 @@
 unit vectorlib;
 interface
 	type
-		pint = ^integer;
+		pint = ^longInt;
 		
 		Iterator = class
 		private
@@ -16,7 +16,7 @@ interface
 			function next(): Iterator;
 			function prev(): Iterator;
 			
-			function data(): integer;
+			function data(): longInt;
 			function raw(): pint;
 
 			function equal(it: Iterator): boolean;
@@ -24,9 +24,9 @@ interface
 
 		Vector = class
 		private
-			length: integer;
-			capacity: integer;
-			data: array of integer;
+			length: longInt;
+			capacity: longInt;
+			data: array of longInt;
 
 		public
 			constructor create();
@@ -34,11 +34,11 @@ interface
 			function start(): Iterator;
 			function finish(): Iterator;
 
-			function at(num: integer): integer;
+			function at(num: longInt): longInt;
 			function empty(): boolean;
 
-			procedure push_back(element: integer);
-			procedure insert(p: Iterator; element: integer);
+			procedure push_back(element: longInt);
+			procedure insert(p: Iterator; element: longInt);
 		end;
 
 implementation
@@ -57,7 +57,7 @@ implementation
 		prev := Iterator.create(raw_data - 1);
 	end;
 
-	function Iterator.data(): integer;
+	function Iterator.data(): longInt;
 	begin
 		data := raw_data^;
 	end;
@@ -78,15 +78,14 @@ implementation
 		capacity := 0;
 	end;
 
-	procedure Vector.push_back(element: integer);
+	procedure Vector.push_back(element: longInt);
 	begin
 		insert(finish(), element);
 	end;
 
-	procedure Vector.insert(p: Iterator; element: integer);
+	procedure Vector.insert(p: Iterator; element: longInt);
 	var
-		tail: Iterator;
-		index, i: integer;
+		index, i: longInt;
 	begin
 		index := p.raw() - start().raw();
 		
@@ -113,7 +112,7 @@ implementation
 		finish := Iterator.create(@data[length]);
 	end;
 
-	function Vector.at(num: integer): integer;
+	function Vector.at(num: longInt): longInt;
 	begin
 		at := data[num];
 	end;

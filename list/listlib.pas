@@ -4,7 +4,7 @@
 unit listlib;
 interface
 	type
-		pint = ^integer;
+		pint = ^longInt;
 
 		Iterator = class
 		private
@@ -18,7 +18,7 @@ interface
 			function prev(): Iterator;
 
 			function raw(): pint;
-			function data(): integer;
+			function data(): longInt;
 
 			function equal(it: Iterator): boolean;
 
@@ -37,11 +37,11 @@ interface
 			function start(): Iterator;
 			function finish(): Iterator;
 
-			function at(num: integer): integer;
+			function at(num: longInt): longInt;
 			function empty(): boolean;
 
-			procedure push_back(element: integer);
-			procedure insert(p: Iterator; element: integer);
+			procedure push_back(element: longInt);
+			procedure insert(p: Iterator; element: longInt);
 		end;
 
 implementation
@@ -60,7 +60,7 @@ implementation
 		prev := prevIt;
 	end;
 
-	function Iterator.data(): integer;
+	function Iterator.data(): longInt;
 	begin
 		data := raw_data^;
 	end;
@@ -91,12 +91,12 @@ implementation
 		head := tail;
 	end;
 
-	procedure List.push_back(element: integer);
+	procedure List.push_back(element: longInt);
 	begin
 		insert(finish(), element);
 	end;
 
-	procedure List.insert(p: Iterator; element: integer);
+	procedure List.insert(p: Iterator; element: longInt);
 	var
 		pelement: pint;
 		prevIt, currentIt: Iterator;
@@ -141,7 +141,7 @@ implementation
 		finish := tail;
 	end;
 
-	function List.at(num: integer): integer;
+	function List.at(num: longInt): longInt;
 	var
 		it: Iterator;
 	begin
@@ -153,7 +153,7 @@ implementation
 		end;
 		at := it.data();
 	end;
-	
+
 	function List.empty(): boolean;
 	begin
 		empty := (head = tail);
