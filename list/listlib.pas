@@ -12,7 +12,8 @@ interface
 			nextIt, prevIt: Iterator;
 
 		public
-			constructor create(it: pint);
+			constructor create(element: longInt);
+			destructor  destroy();
 
 			function next(): Iterator;
 			function prev(): Iterator;
@@ -33,7 +34,7 @@ interface
 
 		public
 			constructor create();
-			
+
 			function start(): Iterator;
 			function finish(): Iterator;
 
@@ -41,13 +42,21 @@ interface
 			function empty(): boolean;
 
 			procedure push_back(element: longInt);
+			function  pop_back(): longInt;
 			procedure insert(p: Iterator; element: longInt);
+			procedure erase(p: Iterator);
 		end;
 
 implementation
-	constructor Iterator.create(it: pint);
+	constructor Iterator.create(element: longInt);
 	begin
-		raw_data := it;
+		new(raw_data);
+		raw_data^ := element;
+	end;
+
+	destructor Iterator.destroy();
+	begin
+		dispose(raw_data);
 	end;
 
 	function Iterator.next(): Iterator;
@@ -96,34 +105,37 @@ implementation
 		insert(finish(), element);
 	end;
 
+	function List.pop_back(): longInt;
+	var
+		res: longInt;
+	begin
+		res := finish().prev().data();
+		erase(finish().prev());
+		pop_back := res;
+	end;
+
 	procedure List.insert(p: Iterator; element: longInt);
 	var
-		pelement: pint;
 		prevIt, currentIt: Iterator;
 	begin
+		currentIt := Iterator.create(element);
 		if head = tail then
 		begin
-			new(pelement);
-			pelement^ := element;
-			head := Iterator.create(pelement);
+			head := currentIt;
 			head.setNext(tail);
 			tail.setPrev(head);
 			exit();
 		end;
 		if p = head then
 		begin
-			new(pelement);
-			pelement^ := element;
-			head := Iterator.create(pelement);
+			head := currentIt;
 			head.setNext(p);
 			p.setPrev(head);
 		end
 		else
 		begin
 			prevIt := p.prev();
-			new(pelement);
-			pelement^ := element;
-			currentIt := Iterator.create(pelement);
+			currentIt := currentIt;
 			prevIt.setNext(currentIt);
 			currentIt.setNext(p);
 			currentIt.setPrev(prevIt);
@@ -131,6 +143,28 @@ implementation
 		end;
 	end;
 
+	procedure List.erase(p: Iterator);
+	var
+		prevIt, nextIt: Iterator;
+	begin
+		if p = tail then
+			exit();
+		if p = head then
+		begin
+			prevIt := head;
+			head := head.next();
+			prevIt.destroy();
+		end
+		else
+		begin
+			prevIt := p.prev();
+			nextIt := p.next();
+			p.destroy();
+			prevIt.setNext(nextIt);
+			nextIt.setPrev(prevIt);
+		end;
+	end;
+	
 	function List.start(): Iterator;
 	begin
 		start := head;
