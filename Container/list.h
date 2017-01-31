@@ -67,7 +67,7 @@ namespace containers
 			return tmpIt;
 		}
 
-		int operator*()
+		int& operator*()
 		{
 			return m_link->m_data;
 		}
