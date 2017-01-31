@@ -6,17 +6,11 @@ namespace containers
 	class list_link
 	{
 	public:
-		list_link(int a)
-		{
-			m_data = new int(a);
-		}
-
-		~list_link()
-		{
-			delete m_data;
-			m_prev = nullptr;
-			m_next = nullptr;
-		}
+		list_link(int data)
+			: m_data(data)
+			, m_next(nullptr)
+			, m_prev(nullptr)
+		{}
 
 		void setNext(list_link* it)
 		{
@@ -28,15 +22,18 @@ namespace containers
 			m_prev = it;
 		}
 
+		friend class list_iterator;
+
+	private:
+		int        m_data;
 		list_link* m_next;
 		list_link* m_prev;
-		int* m_data;
 	};
 
 	class list_iterator
 	{
 	public:
-		list_iterator(list_link* l = nullptr)
+		list_iterator(list_link* l)
 			: m_link(l)
 		{}
 
@@ -44,7 +41,7 @@ namespace containers
 			: m_link(other.getLink())
 		{}
 
-		list_iterator operator++()
+		list_iterator& operator++()
 		{
 			m_link = m_link->m_next;
 			return *this;
@@ -52,35 +49,37 @@ namespace containers
 
 		list_iterator operator++(int)
 		{
-			list_iterator tmpIt(m_link);
-			m_link = m_link->m_next;
+			list_iterator tmpIt(*this);
+			++(*this);
 			return tmpIt;
 		}
 
-		list_iterator operator--()
+		list_iterator& operator--()
 		{
 			m_link = m_link->m_prev;
 			return *this;
 		}
 
-		size_t operator-(const list_iterator& other)
+		list_iterator operator--(int)
 		{
-			return this->m_link - other.m_link;
+			list_iterator tmpIt(*this);
+			--(*this);
+			return tmpIt;
 		}
 
 		int operator*()
 		{
-			return *m_link->m_data;
+			return m_link->m_data;
 		}
 
-		int operator==(const list_iterator& it)
+		int operator==(const list_iterator& other)
 		{
-			return m_link == it.m_link;
+			return m_link == other.m_link;
 		}
 
-		int operator!=(const list_iterator& it)
+		int operator!=(const list_iterator& other)
 		{
-			return m_link != it.m_link;
+			return !(*this == other);
 		}
 
 		list_link* getLink() const
@@ -96,11 +95,9 @@ namespace containers
 	{
 	public:
 		list()
-		{
-			list_link* l = new list_link(0);
-			m_begin = list_iterator(l);
-			m_end = list_iterator(l);
-		}
+			: m_begin(new list_link(0))
+			, m_end  (m_begin)
+		{}
 
 		~list()
 		{
@@ -126,25 +123,22 @@ namespace containers
 
 		int pop_back()
 		{
-			list_iterator it = m_end;
-			--it;
-			int tmp = *it.getLink()->m_data;
+			list_iterator it = end();
+			int tmp = *--it;
 			erase(it);
 			return tmp;
-		}
-
-		void init(list_link* l)
-		{
-			m_begin = list_iterator(l);
-			m_begin.getLink()->setNext(m_end.getLink());
-			m_end.getLink()->setPrev(m_begin.getLink());
 		}
 
 		void insert(list_iterator p, int x)
 		{
 			list_link* l = new list_link(x);
 			if (empty())
-				return init(l);
+			{
+				m_begin = list_iterator(l);
+				m_begin.getLink()->setNext(m_end.getLink());
+				m_end.getLink()->setPrev(m_begin.getLink());
+				return;
+			}
 
 			if (p == m_begin)
 			{
@@ -176,8 +170,8 @@ namespace containers
 			else
 			{
 				list_link* linkNext = (++p).getLink();
-				list_link* linkPrev = (--p).getLink();
-				delete p.getLink();
+				list_link* linkPrev = (----p).getLink();
+				delete (++p).getLink();
 				linkNext->setPrev(linkPrev);
 				linkPrev->setNext(linkNext);
 			}
