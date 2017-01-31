@@ -118,12 +118,12 @@ namespace containers
 
 		void push_back(int x)
 		{
-			insert(end(), x);
+			insert(m_end, x);
 		}
 
 		int pop_back()
 		{
-			list_iterator it = end();
+			list_iterator it = m_end;
 			int tmp = *--it;
 			erase(it);
 			return tmp;
