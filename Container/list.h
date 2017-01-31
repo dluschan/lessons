@@ -6,6 +6,8 @@ namespace containers
 	class list_link
 	{
 	public:
+		friend class list_iterator;
+
 		list_link(int data)
 			: m_data(data)
 			, m_next(nullptr)
@@ -22,8 +24,6 @@ namespace containers
 			m_prev = it;
 		}
 
-		friend class list_iterator;
-
 	private:
 		int        m_data;
 		list_link* m_next;
@@ -32,6 +32,8 @@ namespace containers
 
 	class list_iterator
 	{
+		friend class list;
+
 	public:
 		list_iterator(list_link* l)
 			: m_link(l)
@@ -82,6 +84,7 @@ namespace containers
 			return !(*this == other);
 		}
 
+	private:
 		list_link* getLink() const
 		{
 			return m_link;
@@ -102,7 +105,7 @@ namespace containers
 		~list()
 		{
 			while (!empty())
-					erase(m_begin);
+				erase(m_begin);
 			delete m_end.getLink();
 		}
 
