@@ -47,14 +47,13 @@ void proc(list& l)
 	cout << endl;
 }
 
-void procHeavy(list& l)
+void procHeavy(list& l, int n, int k)
 {
-	const int N = 1000000;
-	while (true)
+	while (n--)
 	{
-		for (int i = 0; i < N; ++i)
+		for (int i = 0; i < k; ++i)
 			l.push_back(rand() % 100);
-		for (int i = 0; i < N; ++i)
+		for (int i = 0; i < k; ++i)
 			l.pop_back();
 	}
 }
@@ -69,8 +68,6 @@ int main()
 {
 	vector v;
 	list l;
-	map m;
-	proc(m);
+	procHeavy(l, 5, 1000);
 	return 0;
 }
-
