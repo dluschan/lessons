@@ -5,9 +5,10 @@ namespace containers
 {
 	class list_link
 	{
-	public:
 		friend class list_iterator;
+		friend class list;
 
+	private:
 		list_link(int data)
 			: m_data(data)
 			, m_next(nullptr)
@@ -24,7 +25,6 @@ namespace containers
 			m_prev = it;
 		}
 
-	private:
 		int        m_data;
 		list_link* m_next;
 		list_link* m_prev;
