@@ -7,7 +7,8 @@
 using namespace std;
 using namespace containers;
 
-void proc(vector& v)
+template<class T>
+void proc(T& v)
 {
 	for (int i = 0; i < 10; ++i)
 		v.push_back(rand() % 100);
@@ -60,14 +61,22 @@ void procHeavy(list& l, int n, int k)
 
 void proc(map& m)
 {
-	m[1] = 8;
-	cout << m[1] << endl;
+	m[1] = 1;
+	m[2] = 2;
+	m[3] = 3;
+	auto it = m.begin();
+	auto itEnd = m.end();
+	for (; it != itEnd; ++it)
+		cout << *it << ' ';
+	cout << endl;
 }
 
 int main()
 {
 	vector v;
 	list l;
-	procHeavy(l, 5, 1000);
+	map m;
+	proc(m);
+	//procHeavy(l, 5, 1000);
 	return 0;
 }
