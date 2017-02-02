@@ -9,12 +9,12 @@ namespace containers
 		Tree(int key, int data = 0)
 			: m_key(key)
 			, m_data(data)
+			, m_left(nullptr)
+			, m_right(nullptr)
 		{}
 
 		int& operator[](int key)
 		{
-			if (m_key == key)
-				return m_data;
 			if (m_key < key && m_right)
 				return (*m_right)[key];
 			if (m_key < key && !m_right)
@@ -29,10 +29,10 @@ namespace containers
 				m_left = new Tree(key);
 				return m_left->m_data;
 			}
+			return m_data;
 		}
 
 	private:
-
 		int   m_key;
 		int   m_data;
 		Tree* m_left;
