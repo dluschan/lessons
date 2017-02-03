@@ -4,217 +4,212 @@
 unit listlib;
 interface
 	type
-		pint = ^longInt;
+		pInt  = ^longInt;
+		pLink = ^list_link;
 
-		Iterator = class
-		private
-			raw_data: pint;
-			nextIt, prevIt: Iterator;
-
+		list_link = object
 		public
-			constructor create(element: longInt);
-			destructor  destroy();
-
-			function next(): Iterator;
-			function prev(): Iterator;
-
-			function raw(): pint;
-			function data(): longInt;
-
-			function equal(it: Iterator): boolean;
+			constructor create(data: longInt);
+			procedure setNext(link: pLink);
+			procedure setPrev(link: pLink);
 
 		private
-			procedure setNext(it: Iterator);
-			procedure setPrev(it: Iterator);
+			m_data: longInt;
+			m_next: pLink;
+			m_prev: pLink;
 		end;
 
-		List = class
-		private
-			head, tail: Iterator;
+		list_iterator = class
+		public
+			constructor create(l: pLink);
+			procedure next();
+			procedure prev();
+			procedure set_data(data: longInt);
+			function get_data(): longInt;
+			function equal(other: list_iterator): boolean;
+			function getLink(): pLink;
 
+		private
+			m_link: pLink;
+		end;
+
+		list = class
 		public
 			constructor create();
-			destructor  destroy();
-
-			function start(): Iterator;
-			function finish(): Iterator;
-
-			function at(num: longInt): longInt;
+			destructor destroy();
+			function get_begin(): list_iterator;
+			function get_end(): list_iterator;
+			procedure push_back(data: longInt);
+			function pop_back(): longInt;
+			procedure insert(p: list_iterator; data: longInt);
+			procedure erase(p: list_iterator);
 			function empty(): boolean;
-			function size(): longInt;
 
-			procedure push_back(element: longInt);
-			function  pop_back(): longInt;
-			procedure insert(p: Iterator; element: longInt);
-			procedure erase(p: Iterator);
+		private
+			m_begin: list_iterator;
+			m_end: list_iterator;
 		end;
 
 implementation
-	constructor Iterator.create(element: longInt);
+	constructor list_link.create(data: longInt);
 	begin
-		new(raw_data);
-		raw_data^ := element;
+		m_data := data;
+		m_next := nil;
+		m_prev := nil;
 	end;
 
-	destructor Iterator.destroy();
+	procedure list_link.setNext(link: pLink);
 	begin
-		dispose(raw_data);
+		m_next := link;
 	end;
 
-	function Iterator.next(): Iterator;
+	procedure list_link.setPrev(link: pLink);
 	begin
-		next := nextIt;
+		m_prev := link;
 	end;
 
-	function Iterator.prev(): Iterator;
+	constructor list_iterator.create(l: pLink);
 	begin
-		prev := prevIt;
+		m_link := l
 	end;
 
-	function Iterator.data(): longInt;
+	procedure list_iterator.next();
 	begin
-		data := raw_data^;
+		m_link := m_link^.m_next;
 	end;
 
-	function Iterator.raw(): pint;
+	procedure list_iterator.prev();
 	begin
-		raw := raw_data;
+		m_link := m_link^.m_prev;
 	end;
 
-	function Iterator.equal(it: Iterator): boolean;
+	procedure list_iterator.set_data(data: longInt);
 	begin
-		equal := (raw_data = it.raw_data);
+		m_link^.m_data := data;
 	end;
 
-	procedure Iterator.setNext(it: Iterator);
+	function list_iterator.get_data(): longInt;
 	begin
-		nextIt := it;
+		get_data := m_link^.m_data;
 	end;
 
-	procedure Iterator.setPrev(it: Iterator);
+	function list_iterator.equal(other: list_iterator): boolean;
 	begin
-		prevIt := it;
+		equal := m_link = other.m_link;
 	end;
 
-	constructor List.create();
+	function list_iterator.getLink(): pLink;
 	begin
-		tail := Iterator.create(0);
-		head := tail;
+		getLink := m_link;
 	end;
 
-	destructor List.destroy();
+	constructor list.create();
+	var
+		link: pLink;
 	begin
-		writeln('Delete list');
+		new(link, create(0));
+		m_begin := list_iterator.create(link);
+		m_end   := list_iterator.create(link);
+	end;
+
+	destructor list.destroy();
+	begin
 		while not empty() do
-			erase(start());
-		tail.destroy();
+			erase(m_begin);
+		dispose(m_end.getLink());
 	end;
 
-	procedure List.push_back(element: longInt);
+	function list.get_begin(): list_iterator;
 	begin
-		insert(finish(), element);
+		get_begin := m_begin;
 	end;
 
-	function List.pop_back(): longInt;
+	function list.get_end(): list_iterator;
+	begin
+		get_end := m_end;
+	end;
+
+	procedure list.push_back(data: longInt);
+	begin
+		insert(m_end, data);
+	end;
+
+	function list.pop_back(): longInt;
 	var
-		res: longInt;
+		it: list_iterator;
+		tmp: longInt;
 	begin
-		res := finish().prev().data();
-		erase(finish().prev());
-		pop_back := res;
+		it := m_end;
+		it.prev();
+		tmp := it.get_data();
+		erase(it);
+		pop_back := tmp;
 	end;
 
-	procedure List.insert(p: Iterator; element: longInt);
+	procedure list.insert(p: list_iterator; data: longInt);
 	var
-		prevIt, currentIt: Iterator;
+		link, nextLink, prevLink: pLink;
 	begin
-		currentIt := Iterator.create(element);
+		new(link, create(data));
 		if empty() then
 		begin
-			head := currentIt;
-			head.setNext(tail);
-			tail.setPrev(head);
+			writeln('empty');
+			m_begin := list_iterator.create(link);
+			m_begin.getLink()^.setNext(m_end.getLink());
+			m_end.getLink()^.setPrev(m_begin.getLink());
 			exit();
 		end;
-		if p = head then
+
+		if p.equal(m_begin) then
 		begin
-			head := currentIt;
-			head.setNext(p);
-			p.setPrev(head);
+			writeln('begin');
+			nextLink := p.getLink();
+			link^.setNext(nextLink);
+			nextLink^.setPrev(link);
 		end
 		else
 		begin
-			prevIt := p.prev();
-			currentIt := currentIt;
-			prevIt.setNext(currentIt);
-			currentIt.setNext(p);
-			currentIt.setPrev(prevIt);
-			p.setPrev(currentIt);
+			writeln('no begin');
+			nextLink := p.getLink();
+			p.prev();
+			prevLink := p.getLink();
+			link^.setNext(nextLink);
+			nextLink^.setPrev(link);
+			link^.setPrev(prevLink);
+			prevLink^.setNext(link);
 		end;
 	end;
 
-	procedure List.erase(p: Iterator);
+	procedure list.erase(p: list_iterator);
 	var
-		prevIt, nextIt: Iterator;
+		nextLink, prevLink: pLink;
 	begin
-		if p = tail then
+		if p.equal(m_end) then
 			exit();
-		if p = start() then
+
+		if p.equal(m_begin) then
 		begin
-			prevIt := head;
-			head := head.next();
-			prevIt.destroy();
+			p.next();
+			nextLink := p.getLink();
+			dispose(m_begin.getLink());
+			m_begin := list_iterator.create(nextLink);
 		end
 		else
 		begin
-			prevIt := p.prev();
-			nextIt := p.next();
-			p.destroy();
-			prevIt.setNext(nextIt);
-			nextIt.setPrev(prevIt);
+			p.next();
+			nextLink := p.getLink();
+			p.prev();
+			p.prev();
+			prevLink := p.getLink();
+			p.next();
+			dispose(p.getLink());
+			nextLink^.setPrev(prevLink);
+			prevLink^.setNext(nextLink);
 		end;
 	end;
-	
-	function List.start(): Iterator;
-	begin
-		start := head;
-	end;
 
-	function List.finish(): Iterator;
+	function list.empty(): boolean;
 	begin
-		finish := tail;
-	end;
-
-	function List.at(num: longInt): longInt;
-	var
-		it: Iterator;
-	begin
-		it := start();
-		while num > 0 do
-		begin
-			num := num - 1;
-			it := it.next();
-		end;
-		at := it.data();
-	end;
-
-	function List.empty(): boolean;
-	begin
-		empty := (head = tail);
-	end;
-
-	function List.size(): longInt;
-	var
-		p: iterator;
-		k: longInt;
-	begin
-		p := start();
-		k := 0;
-		while p <> finish() do
-		begin
-			k := k + 1;
-			p := p.next();
-		end;
-		size := k;
+		empty := m_begin.equal(m_end);
 	end;
 end.
