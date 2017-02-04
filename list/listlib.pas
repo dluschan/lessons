@@ -120,18 +120,24 @@ implementation
 	end;
 
 	function list.get_begin(): list_iterator;
+	var
+		it: list_iterator;
 	begin
-		get_begin := m_begin;
+		it := list_iterator.create(m_begin.m_link);
+		get_begin := it;
 	end;
 
 	function list.get_end(): list_iterator;
+	var
+		it: list_iterator;
 	begin
-		get_end := m_end;
+		it := list_iterator.create(m_end.m_link);
+		get_end := it;
 	end;
 
 	procedure list.push_back(data: longInt);
 	begin
-		insert(m_end, data);
+		insert(get_end(), data);
 	end;
 
 	function list.pop_back(): longInt;
@@ -139,7 +145,7 @@ implementation
 		it: list_iterator;
 		tmp: longInt;
 	begin
-		it := m_end;
+		it := get_end();
 		it.prev();
 		tmp := it.get_data();
 		erase(it);
@@ -153,7 +159,6 @@ implementation
 		new(link, create(data));
 		if empty() then
 		begin
-			writeln('empty');
 			m_begin := list_iterator.create(link);
 			m_begin.getLink()^.setNext(m_end.getLink());
 			m_end.getLink()^.setPrev(m_begin.getLink());
@@ -162,47 +167,44 @@ implementation
 
 		if p.equal(m_begin) then
 		begin
-			writeln('begin');
 			nextLink := p.getLink();
 			link^.setNext(nextLink);
 			nextLink^.setPrev(link);
+			m_begin := list_iterator.create(link);
 		end
 		else
 		begin
-			writeln('no begin');
 			nextLink := p.getLink();
 			p.prev();
 			prevLink := p.getLink();
 			link^.setNext(nextLink);
 			nextLink^.setPrev(link);
 			link^.setPrev(prevLink);
-			prevLink^.setNext(link);
+			prevLink^.setNext(link); 
 		end;
 	end;
 
 	procedure list.erase(p: list_iterator);
 	var
-		nextLink, prevLink: pLink;
+		nextLink, prevLink, curLink: pLink;
 	begin
 		if p.equal(m_end) then
 			exit();
 
 		if p.equal(m_begin) then
 		begin
-			p.next();
 			nextLink := p.getLink();
-			dispose(m_begin.getLink());
-			m_begin := list_iterator.create(nextLink);
+			m_begin.next();
+			p.next();
+			dispose(nextLink);
 		end
 		else
 		begin
+			nextLink := p.getLink()^.m_next;
+			prevLink := p.getLink()^.m_prev;
+			curLink := p.getLink();
 			p.next();
-			nextLink := p.getLink();
-			p.prev();
-			p.prev();
-			prevLink := p.getLink();
-			p.next();
-			dispose(p.getLink());
+			dispose(curLink);
 			nextLink^.setPrev(prevLink);
 			prevLink^.setNext(nextLink);
 		end;
