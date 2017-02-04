@@ -4,45 +4,53 @@
 unit listlib;
 interface
 	type
-		pInt  = ^longInt;
-		pLink = ^list_link;
+		list_link_pointer = ^list_link;
 
 		list_link = object
 		public
 			constructor create(data: longInt);
-			procedure setNext(link: pLink);
-			procedure setPrev(link: pLink);
+			
+			procedure setNext(link: list_link_pointer);
+			procedure setPrev(link: list_link_pointer);
 
 		private
 			m_data: longInt;
-			m_next: pLink;
-			m_prev: pLink;
+			m_next: list_link_pointer;
+			m_prev: list_link_pointer;
 		end;
 
 		list_iterator = class
 		public
-			constructor create(l: pLink);
+			constructor create(l: list_link_pointer);
+			
 			procedure next();
 			procedure prev();
+				
 			procedure set_data(data: longInt);
 			function get_data(): longInt;
+			
 			function equal(other: list_iterator): boolean;
-			function getLink(): pLink;
+			function getLink(): list_link_pointer;
 
 		private
-			m_link: pLink;
+			m_link: list_link_pointer;
 		end;
 
 		list = class
 		public
 			constructor create();
 			destructor destroy();
+			
 			function get_begin(): list_iterator;
 			function get_end(): list_iterator;
+
 			procedure push_back(data: longInt);
 			function pop_back(): longInt;
+
 			procedure insert(p: list_iterator; data: longInt);
 			procedure erase(p: list_iterator);
+
+			function at(index: longInt): longInt;
 			function empty(): boolean;
 
 		private
@@ -58,17 +66,17 @@ implementation
 		m_prev := nil;
 	end;
 
-	procedure list_link.setNext(link: pLink);
+	procedure list_link.setNext(link: list_link_pointer);
 	begin
 		m_next := link;
 	end;
 
-	procedure list_link.setPrev(link: pLink);
+	procedure list_link.setPrev(link: list_link_pointer);
 	begin
 		m_prev := link;
 	end;
 
-	constructor list_iterator.create(l: pLink);
+	constructor list_iterator.create(l: list_link_pointer);
 	begin
 		m_link := l
 	end;
@@ -98,14 +106,14 @@ implementation
 		equal := m_link = other.m_link;
 	end;
 
-	function list_iterator.getLink(): pLink;
+	function list_iterator.getLink(): list_link_pointer;
 	begin
 		getLink := m_link;
 	end;
 
 	constructor list.create();
 	var
-		link: pLink;
+		link: list_link_pointer;
 	begin
 		new(link, create(0));
 		m_begin := list_iterator.create(link);
@@ -115,7 +123,7 @@ implementation
 	destructor list.destroy();
 	begin
 		while not empty() do
-			erase(m_begin);
+			erase(get_begin());
 		dispose(m_end.getLink());
 	end;
 
@@ -154,7 +162,7 @@ implementation
 
 	procedure list.insert(p: list_iterator; data: longInt);
 	var
-		link, nextLink, prevLink: pLink;
+		link, nextLink, prevLink: list_link_pointer;
 	begin
 		new(link, create(data));
 		if empty() then
@@ -186,7 +194,7 @@ implementation
 
 	procedure list.erase(p: list_iterator);
 	var
-		nextLink, prevLink, curLink: pLink;
+		nextLink, prevLink, curLink: list_link_pointer;
 	begin
 		if p.equal(m_end) then
 			exit();
@@ -208,6 +216,19 @@ implementation
 			nextLink^.setPrev(prevLink);
 			prevLink^.setNext(nextLink);
 		end;
+	end;
+
+	function list.at(index: longInt): longInt;
+	var
+		it: list_iterator;
+	begin
+		it := get_begin();
+		while index > 0 do
+		begin
+			it.next();
+			index := index - 1;
+		end;
+		at := it.get_data();
 	end;
 
 	function list.empty(): boolean;
