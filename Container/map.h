@@ -1,6 +1,8 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <utility>
+
 namespace containers
 {
 	class Node
@@ -77,6 +79,7 @@ namespace containers
 
 	class map_iterator
 	{
+		friend class map;
 	public:
 		map_iterator(Node* node)
 			: m_node(node)
@@ -94,7 +97,7 @@ namespace containers
 			}
 			else
 			{
-				m_node = m_node->walk_until_left()->m_parent->walk_left();
+				m_node = m_node->walk_until_left()->m_parent;
 			}
 			return *this;
 		}
@@ -114,7 +117,7 @@ namespace containers
 			}
 			else
 			{
-				m_node = m_node->walk_until_right()->m_parent->walk_right();
+				m_node = m_node->walk_until_right()->m_parent;
 			}
 			return *this;
 		}
@@ -148,16 +151,26 @@ namespace containers
 	{
 	public:
 		map()
-			: m_begin(new Node(nullptr, 0))
-			, m_end(m_begin)
+			: m_root(nullptr)
+			, m_last(nullptr)
+			, m_begin(m_root)
+			, m_end(new Node(nullptr, std::numeric_limits<int>::max()))
 		{}
 
 		int& operator[](int key)
 		{
 			if (!m_root)
+			{
 				m_root = new Node(nullptr, key);
+				m_last = m_root;
+				m_last->m_right = m_end.m_node;
+			}
+
+			m_last->m_right = nullptr;
 			int& data = m_root->operator [](key);
 			m_begin = map_iterator(m_root->walk_left());
+			m_last = m_root->walk_right();
+			m_last->m_right = m_end.m_node;
 			return data;
 		}
 
@@ -173,6 +186,7 @@ namespace containers
 
 	private:
 		Node* m_root;
+		Node* m_last;
 		map_iterator m_begin;
 		map_iterator m_end;
 	};
