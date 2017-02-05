@@ -25,7 +25,7 @@ interface
 			
 			procedure next();
 			procedure prev();
-				
+			
 			procedure set_data(data: longInt);
 			function get_data(): longInt;
 			
@@ -39,7 +39,7 @@ interface
 		list = class
 		public
 			constructor create();
-			destructor destroy();
+			destructor destroy(); override;
 			
 			function get_begin(): list_iterator;
 			function get_end(): list_iterator;
@@ -78,7 +78,7 @@ implementation
 
 	constructor list_iterator.create(l: list_link_pointer);
 	begin
-		m_link := l
+		m_link := l;
 	end;
 
 	procedure list_iterator.next();
@@ -117,35 +117,39 @@ implementation
 	begin
 		new(link, create(0));
 		m_begin := list_iterator.create(link);
-		m_end   := list_iterator.create(link);
+		m_end := list_iterator.create(link);
 	end;
 
 	destructor list.destroy();
+	var
+		it: list_iterator;
 	begin
+		it := get_begin();
 		while not empty() do
-			erase(get_begin());
+			erase(it);
+		it.destroy();
 		dispose(m_end.getLink());
+		m_begin.destroy();
+		m_end.destroy();
 	end;
 
 	function list.get_begin(): list_iterator;
-	var
-		it: list_iterator;
 	begin
-		it := list_iterator.create(m_begin.m_link);
-		get_begin := it;
+		get_begin := list_iterator.create(m_begin.m_link);
 	end;
 
 	function list.get_end(): list_iterator;
-	var
-		it: list_iterator;
 	begin
-		it := list_iterator.create(m_end.m_link);
-		get_end := it;
+		get_end := list_iterator.create(m_end.m_link);
 	end;
 
 	procedure list.push_back(data: longInt);
+	var
+		it: list_iterator;
 	begin
-		insert(get_end(), data);
+		it := get_end();
+		insert(it, data);
+		it.destroy();
 	end;
 
 	function list.pop_back(): longInt;
@@ -167,6 +171,7 @@ implementation
 		new(link, create(data));
 		if empty() then
 		begin
+			m_begin.destroy();
 			m_begin := list_iterator.create(link);
 			m_begin.getLink()^.setNext(m_end.getLink());
 			m_end.getLink()^.setPrev(m_begin.getLink());
@@ -178,6 +183,7 @@ implementation
 			nextLink := p.getLink();
 			link^.setNext(nextLink);
 			nextLink^.setPrev(link);
+			m_begin.destroy();
 			m_begin := list_iterator.create(link);
 		end
 		else
@@ -229,6 +235,7 @@ implementation
 			index := index - 1;
 		end;
 		at := it.get_data();
+		it.destroy();
 	end;
 
 	function list.empty(): boolean;
