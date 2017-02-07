@@ -27,9 +27,17 @@ begin
 	writeln(to_str(c));
 end;
 
-function check(c: container; pattern: string): boolean;
+function equal(c: container; pattern: string): boolean;
 begin
 	check := to_str(c) = pattern;
+end;
+
+procedure check(c: container; pattern: string);
+begin
+	if equal(c, pattern) then
+		writeln('Ok')
+	else
+		writeln('Foo');
 end;
 
 procedure test();
@@ -44,10 +52,7 @@ begin
 	m.push_back(4);
 	m.push_back(5);
 
-	if check(m, '1 2 3 4 5') then
-		writeln('Ok')
-	else
-		writeln('Foo');
+	check(m, '1 2 3 4 5');
 
 	it := m.get_begin();
 	it.next();
@@ -57,10 +62,7 @@ begin
 	m.insert(it, -3);
 	it.destroy();
 
-	if check(m, '1 2 -3 -2 -1 3 4 5') then
-		writeln('Ok')
-	else
-		writeln('Foo');
+	check(m, '1 2 -3 -2 -1 3 4 5');
 
 	it := m.get_begin();
 	it.next();
@@ -68,10 +70,7 @@ begin
 	m.erase(it);
 	it.destroy();
 
-	if check(m, '1 -2 -1 3 4 5') then
-		writeln('Ok')
-	else
-		writeln('Foo');
+	check(m, '1 -2 -1 3 4 5');
 	
 	m2 := container.create();
 	while not m.empty() do
@@ -79,10 +78,7 @@ begin
 
 	m.destroy();
 	
-	if check(m2, '5 4 3 -1 -2 1') then
-		writeln('Ok')
-	else
-		writeln('Foo');
+	check(m2, '5 4 3 -1 -2 1');
 
 	m2.destroy();
 end;
