@@ -17,7 +17,7 @@ interface
 			function get_data(): longInt;
 
 			function equal(other: iterator): boolean;
-			function getLink(): link;
+			function get_link(): link;
 
 		private
 			m_link: link;
@@ -77,9 +77,9 @@ implementation
 		equal := (m_link = other.m_link);
 	end;
 
-	function iterator.getLink(): link;
+	function iterator.get_link(): link;
 	begin
-		getLink := m_link;
+		get_link := m_link;
 	end;
 
 	constructor container.create();
@@ -107,7 +107,7 @@ implementation
 	var
 		index, i: longInt;
 	begin
-		index := p.getLink() - get_begin().getLink();
+		index := p.get_link() - get_begin().get_link();
 
 		if m_length = m_capacity then
 		begin
