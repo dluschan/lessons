@@ -1,25 +1,25 @@
 {$mode objfpc} // directive to be used for defining classes
 {$m+}		   // directive to be used for using constructor
 
-unit listlib;
+unit containers;
 interface
 	type
-		list_link = class
+		link = class
 		public
 			constructor create(data: longInt);
 			
-			procedure setNext(link: list_link);
-			procedure setPrev(link: list_link);
+			procedure setNext(link: link);
+			procedure setPrev(link: link);
 
 		private
 			m_data: longInt;
-			m_next: list_link;
-			m_prev: list_link;
+			m_next: link;
+			m_prev: link;
 		end;
 
-		list_iterator = class
+		iterator = class
 		public
-			constructor create(l: list_link);
+			constructor create(l: link);
 			
 			procedure next();
 			procedure prev();
@@ -27,98 +27,98 @@ interface
 			procedure set_data(data: longInt);
 			function get_data(): longInt;
 			
-			function equal(other: list_iterator): boolean;
-			function getLink(): list_link;
+			function equal(other: iterator): boolean;
+			function getLink(): link;
 
 		private
-			m_link: list_link;
+			m_link: link;
 		end;
 
-		list = class
+		container = class
 		public
 			constructor create();
 			destructor destroy(); override;
 			
-			function get_begin(): list_iterator;
-			function get_end(): list_iterator;
+			function get_begin(): iterator;
+			function get_end(): iterator;
 
 			procedure push_back(data: longInt);
 			function pop_back(): longInt;
 
-			procedure insert(p: list_iterator; data: longInt);
-			procedure erase(p: list_iterator);
+			procedure insert(p: iterator; data: longInt);
+			procedure erase(p: iterator);
 
 			function at(index: longInt): longInt;
 			function empty(): boolean;
 
 		private
-			m_begin: list_iterator;
-			m_end: list_iterator;
+			m_begin: iterator;
+			m_end: iterator;
 		end;
 
 implementation
-	constructor list_link.create(data: longInt);
+	constructor link.create(data: longInt);
 	begin
 		m_data := data;
 		m_next := nil;
 		m_prev := nil;
 	end;
 
-	procedure list_link.setNext(link: list_link);
+	procedure link.setNext(link: link);
 	begin
 		m_next := link;
 	end;
 
-	procedure list_link.setPrev(link: list_link);
+	procedure link.setPrev(link: link);
 	begin
 		m_prev := link;
 	end;
 
-	constructor list_iterator.create(l: list_link);
+	constructor iterator.create(l: link);
 	begin
 		m_link := l;
 	end;
 
-	procedure list_iterator.next();
+	procedure iterator.next();
 	begin
 		m_link := m_link.m_next;
 	end;
 
-	procedure list_iterator.prev();
+	procedure iterator.prev();
 	begin
 		m_link := m_link.m_prev;
 	end;
 
-	procedure list_iterator.set_data(data: longInt);
+	procedure iterator.set_data(data: longInt);
 	begin
 		m_link.m_data := data;
 	end;
 
-	function list_iterator.get_data(): longInt;
+	function iterator.get_data(): longInt;
 	begin
 		get_data := m_link.m_data;
 	end;
 
-	function list_iterator.equal(other: list_iterator): boolean;
+	function iterator.equal(other: iterator): boolean;
 	begin
 		equal := m_link = other.m_link;
 	end;
 
-	function list_iterator.getLink(): list_link;
+	function iterator.getLink(): link;
 	begin
 		getLink := m_link;
 	end;
 
-	constructor list.create();
+	constructor container.create();
 	var
-		link: list_link;
+		local_link: link;
 	begin
-		link := list_link.create(0);
-		m_begin := list_iterator.create(link);
-		m_end := list_iterator.create(link);
+		local_link := link.create(0);
+		m_begin := iterator.create(local_link);
+		m_end := iterator.create(local_link);
 	end;
 
-	destructor list.destroy();
+	destructor container.destroy();
 	begin
 		while not empty() do
 			pop_back();
@@ -127,28 +127,28 @@ implementation
 		m_end.destroy();
 	end;
 
-	function list.get_begin(): list_iterator;
+	function container.get_begin(): iterator;
 	begin
-		get_begin := list_iterator.create(m_begin.m_link);
+		get_begin := iterator.create(m_begin.m_link);
 	end;
 
-	function list.get_end(): list_iterator;
+	function container.get_end(): iterator;
 	begin
-		get_end := list_iterator.create(m_end.m_link);
+		get_end := iterator.create(m_end.m_link);
 	end;
 
-	procedure list.push_back(data: longInt);
+	procedure container.push_back(data: longInt);
 	var
-		it: list_iterator;
+		it: iterator;
 	begin
 		it := get_end();
 		insert(it, data);
 		it.destroy();
 	end;
 
-	function list.pop_back(): longInt;
+	function container.pop_back(): longInt;
 	var
-		it: list_iterator;
+		it: iterator;
 	begin
 		it := get_end();
 		it.prev();
@@ -157,15 +157,15 @@ implementation
 		it.destroy();
 	end;
 
-	procedure list.insert(p: list_iterator; data: longInt);
+	procedure container.insert(p: iterator; data: longInt);
 	var
-		link: list_link;
+		local_link: link;
 	begin
-		link := list_link.create(data);
+		local_link := link.create(data);
 		if p.equal(m_end) and empty() then
 		begin
-			link.setNext(m_end.getLink());
-			m_end.getLink().setPrev(link);
+			local_link.setNext(m_end.getLink());
+			m_end.getLink().setPrev(local_link);
 			m_begin.prev();
 			p.prev();
 			exit();
@@ -173,22 +173,22 @@ implementation
 
 		if p.equal(m_begin) then
 		begin
-			link.setNext(m_begin.getLink());
-			m_begin.getLink().setPrev(link);
+			local_link.setNext(m_begin.getLink());
+			m_begin.getLink().setPrev(local_link);
 			m_begin.prev();
 			p.prev();
 		end
 		else
 		begin
-			link.setNext(p.getLink());
-			link.setPrev(p.getLink().m_prev);
-			p.getLink().m_prev.setNext(link);
-			p.getLink().setPrev(link);
+			local_link.setNext(p.getLink());
+			local_link.setPrev(p.getLink().m_prev);
+			p.getLink().m_prev.setNext(local_link);
+			p.getLink().setPrev(local_link);
 			p.prev();
 		end;
 	end;
 
-	procedure list.erase(p: list_iterator);
+	procedure container.erase(p: iterator);
 	begin
 		if p.equal(m_end) then
 			exit();
@@ -208,9 +208,9 @@ implementation
 		end;
 	end;
 
-	function list.at(index: longInt): longInt;
+	function container.at(index: longInt): longInt;
 	var
-		it: list_iterator;
+		it: iterator;
 	begin
 		it := get_begin();
 		while index > 0 do
@@ -222,7 +222,7 @@ implementation
 		it.destroy();
 	end;
 
-	function list.empty(): boolean;
+	function container.empty(): boolean;
 	begin
 		empty := m_begin.equal(m_end);
 	end;
