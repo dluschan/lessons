@@ -1,12 +1,12 @@
-program listTest;
+program test1;
 uses
-	listlib;
+	containers;
 var
-	m: list;
-	a, b: list_iterator;
+	m: container;
+	a, b: iterator;
 
 begin
-	m := list.create();
+	m := container.create();
 	m.push_back(1);
 	m.push_back(2);
 	m.push_back(3);
