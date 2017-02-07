@@ -90,6 +90,9 @@ implementation
 
 	destructor container.destroy();
 	begin
+		setLength(m_data, 0);
+		m_length := 0;
+		m_capacity := 0;
 	end;
 
 	procedure container.push_back(data: longInt);
@@ -99,8 +102,8 @@ implementation
 
 	function container.pop_back(): longInt;
 	begin
-		pop_back := m_data[m_length-1];
 		m_length := m_length - 1;
+		pop_back := m_data[m_length];
 	end;
 
 	procedure container.insert(p: iterator; data: longInt);
