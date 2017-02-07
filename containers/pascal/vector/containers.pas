@@ -123,7 +123,15 @@ implementation
 	end;
 
 	procedure container.erase(p: iterator);
+	var
+		index, i: longInt;
 	begin
+		index := p.get_link() - get_begin().get_link();
+
+		m_length := m_length - 1;
+
+		for i := index to m_length - 1 do
+			m_data[i] := m_data[i+1];
 	end;
 
 	function container.get_begin(): iterator;
