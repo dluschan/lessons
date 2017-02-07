@@ -4,121 +4,145 @@
 unit vectorlib;
 interface
 	type
-		pint = ^longInt;
-		
-		Iterator = class
-		private
-			raw_data: pint;
+		link = ^longInt;
 
+		iterator = class
 		public
-			constructor create(it: pint);
-			
-			function next(): Iterator;
-			function prev(): Iterator;
-			
-			function data(): longInt;
-			function raw(): pint;
+			constructor create(l: link);
 
-			function equal(it: Iterator): boolean;
+			procedure next();
+			procedure prev();
+
+			procedure set_data(data: longInt);
+			function get_data(): longInt;
+
+			function equal(other: iterator): boolean;
+			function getLink(): link;
+
+		private
+			m_link: link;
 		end;
 
-		Vector = class
-		private
-			length: longInt;
-			capacity: longInt;
-			data: array of longInt;
-
+		container = class
 		public
 			constructor create();
+			destructor destroy(); override;
 
-			function start(): Iterator;
-			function finish(): Iterator;
+			function get_begin(): iterator;
+			function get_end(): iterator;
 
-			function at(num: longInt): longInt;
+			procedure push_back(data: longInt);
+			function pop_back(): longInt;
+
+			procedure insert(p: iterator; data: longInt);
+			procedure erase(p: iterator);
+
+			function at(index: longInt): longInt;
 			function empty(): boolean;
 
-			procedure push_back(element: longInt);
-			procedure insert(p: Iterator; element: longInt);
+		private
+			m_length: longInt;
+			m_capacity: longInt;
+			m_data: array of longInt;
 		end;
 
 implementation
-	constructor Iterator.create(it: pint);
+	constructor iterator.create(l: link);
 	begin
-		raw_data := it;
+		m_link := l;
 	end;
 
-	function Iterator.next(): Iterator;
+	procedure iterator.next();
 	begin
-		next := Iterator.create(raw_data + 1);
+		m_link := m_link + 1;
 	end;
 
-	function Iterator.prev(): Iterator;
+	procedure iterator.prev();
 	begin
-		prev := Iterator.create(raw_data - 1);
+		m_link := m_link - 1;
 	end;
 
-	function Iterator.data(): longInt;
+	procedure iterator.set_data(data: longInt);
 	begin
-		data := raw_data^;
+		m_link^ := data;
 	end;
 
-	function Iterator.raw(): pint;
+	function iterator.get_data(): longInt;
 	begin
-		raw := raw_data;
+		get_data := m_link^;
 	end;
 
-	function Iterator.equal(it: Iterator): boolean;
+	function iterator.equal(other: iterator): boolean;
 	begin
-		equal := (raw_data = it.raw_data);
+		equal := (m_link = other.m_link);
 	end;
 
-	constructor Vector.create();
+	function iterator.getLink(): link;
 	begin
-		length := 0;
-		capacity := 0;
+		getLink := m_link;
 	end;
 
-	procedure Vector.push_back(element: longInt);
+	constructor container.create();
 	begin
-		insert(finish(), element);
+		m_length := 0;
+		m_capacity := 0;
 	end;
 
-	procedure Vector.insert(p: Iterator; element: longInt);
+	destructor container.destroy();
+	begin
+	end;
+
+	procedure container.push_back(data: longInt);
+	begin
+		insert(get_end(), data);
+	end;
+
+	function container.pop_back(): longInt;
+	begin
+		pop_back := m_data[m_length-1];
+		m_length := m_length - 1;
+	end;
+
+	procedure container.insert(p: iterator; data: longInt);
 	var
 		index, i: longInt;
 	begin
-		index := p.raw() - start().raw();
-		
-		if length = capacity then
+		index := p.getLink() - get_begin().getLink();
+
+		if m_length = m_capacity then
 		begin
-			capacity := 3 * capacity div 2 + 1;
-			setLength(data, capacity);
+			m_capacity := 3 * m_capacity div 2 + 1;
+			setLength(m_data, m_capacity);
 		end;
-		length := length + 1;
+		m_length := m_length + 1;
 
-		for i := length downto index + 1 do
-			data[i] := data[i-1];
+		for i := m_length downto index + 1 do
+			m_data[i] := m_data[i-1];
 
-		data[index] := element;
+		m_data[index] := data;
 	end;
 
-	function Vector.start(): Iterator;
+	procedure container.erase(p: iterator);
 	begin
-		start := Iterator.create(@data[0]);
 	end;
 
-	function Vector.finish(): Iterator;
+	function container.get_begin(): iterator;
 	begin
-		finish := Iterator.create(@data[length]);
+		get_begin := iterator.create(@m_data[0]);
 	end;
 
-	function Vector.at(num: longInt): longInt;
+	function container.get_end(): iterator;
 	begin
-		at := data[num];
+		get_end := iterator.create(@m_data[m_length]);
 	end;
 
-	function Vector.empty(): boolean;
+	function container.at(index: longInt): longInt;
 	begin
-		empty := (length = 0);
+		at := m_data[index];
+	end;
+
+	function container.empty(): boolean;
+	begin
+		empty := (m_length = 0);
 	end;
 end.
