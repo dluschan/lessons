@@ -8,8 +8,8 @@ interface
 		public
 			constructor create(data: longInt);
 			
-			procedure setNext(link: link);
-			procedure setPrev(link: link);
+			procedure set_next(link: link);
+			procedure set_prev(link: link);
 
 		private
 			m_data: longInt;
@@ -28,7 +28,7 @@ interface
 			function get_data(): longInt;
 			
 			function equal(other: iterator): boolean;
-			function getLink(): link;
+			function get_link(): link;
 
 		private
 			m_link: link;
@@ -64,12 +64,12 @@ implementation
 		m_prev := nil;
 	end;
 
-	procedure link.setNext(link: link);
+	procedure link.set_next(link: link);
 	begin
 		m_next := link;
 	end;
 
-	procedure link.setPrev(link: link);
+	procedure link.set_prev(link: link);
 	begin
 		m_prev := link;
 	end;
@@ -104,9 +104,9 @@ implementation
 		equal := m_link = other.m_link;
 	end;
 
-	function iterator.getLink(): link;
+	function iterator.get_link(): link;
 	begin
-		getLink := m_link;
+		get_link := m_link;
 	end;
 
 	constructor container.create();
@@ -122,7 +122,7 @@ implementation
 	begin
 		while not empty() do
 			pop_back();
-		m_end.getLink().destroy();
+		m_end.get_link().destroy();
 		m_begin.destroy();
 		m_end.destroy();
 	end;
@@ -164,8 +164,8 @@ implementation
 		local_link := link.create(data);
 		if p.equal(m_end) and empty() then
 		begin
-			local_link.setNext(m_end.getLink());
-			m_end.getLink().setPrev(local_link);
+			local_link.set_next(m_end.get_link());
+			m_end.get_link().set_prev(local_link);
 			m_begin.prev();
 			p.prev();
 			exit();
@@ -173,17 +173,17 @@ implementation
 
 		if p.equal(m_begin) then
 		begin
-			local_link.setNext(m_begin.getLink());
-			m_begin.getLink().setPrev(local_link);
+			local_link.set_next(m_begin.get_link());
+			m_begin.get_link().set_prev(local_link);
 			m_begin.prev();
 			p.prev();
 		end
 		else
 		begin
-			local_link.setNext(p.getLink());
-			local_link.setPrev(p.getLink().m_prev);
-			p.getLink().m_prev.setNext(local_link);
-			p.getLink().setPrev(local_link);
+			local_link.set_next(p.get_link());
+			local_link.set_prev(p.get_link().m_prev);
+			p.get_link().m_prev.set_next(local_link);
+			p.get_link().set_prev(local_link);
 			p.prev();
 		end;
 	end;
@@ -197,14 +197,14 @@ implementation
 		begin
 			m_begin.next();
 			p.next();
-			p.getLink().m_prev.destroy();
+			p.get_link().m_prev.destroy();
 		end
 		else
 		begin
 			p.next();
-			p.getLink().setPrev(p.getLink().m_prev.m_prev);
-			p.getLink().m_prev.m_next.destroy();
-			p.getLink().m_prev.setNext(p.getLink());
+			p.get_link().set_prev(p.get_link().m_prev.m_prev);
+			p.get_link().m_prev.m_next.destroy();
+			p.get_link().m_prev.set_next(p.get_link());
 		end;
 	end;
 
