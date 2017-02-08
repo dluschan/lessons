@@ -85,19 +85,24 @@ implementation
 	constructor container.create();
 	begin
 		m_length := 0;
-		m_capacity := 0;
+		m_capacity := 10;
+		setLength(m_data, m_capacity);
 	end;
 
 	destructor container.destroy();
 	begin
-		setLength(m_data, 0);
 		m_length := 0;
 		m_capacity := 0;
+		setLength(m_data, m_capacity);
 	end;
 
 	procedure container.push_back(data: longInt);
+	var
+		it: iterator;
 	begin
-		insert(get_end(), data);
+		it := get_end();
+		insert(it, data);
+		it.destroy();
 	end;
 
 	function container.pop_back(): longInt;
@@ -109,8 +114,11 @@ implementation
 	procedure container.insert(p: iterator; data: longInt);
 	var
 		index, i: longInt;
+		it: iterator;
 	begin
-		index := p.get_link() - get_begin().get_link();
+		it := get_begin();
+		index := p.get_link() - it.get_link();
+		it.destroy();
 
 		if m_length = m_capacity then
 		begin
@@ -123,6 +131,8 @@ implementation
 			m_data[i] := m_data[i-1];
 
 		m_data[index] := data;
+		p.destroy();
+		p := iterator.create(@m_data[index]);
 	end;
 
 	procedure container.erase(p: iterator);
