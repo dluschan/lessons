@@ -29,7 +29,7 @@ end;
 
 function equal(c: container; pattern: string): boolean;
 begin
-	check := to_str(c) = pattern;
+	equal := to_str(c) = pattern;
 end;
 
 procedure check(c: container; pattern: string);
@@ -37,7 +37,7 @@ begin
 	if equal(c, pattern) then
 		writeln('Ok')
 	else
-		writeln('Foo');
+		writeln('Failed: expected "', pattern, '", but got "', to_str(c), '"');
 end;
 
 procedure test();
@@ -60,25 +60,27 @@ begin
 	m.insert(it, -1);
 	m.insert(it, -2);
 	m.insert(it, -3);
-	it.destroy();
 
 	check(m, '1 2 -3 -2 -1 3 4 5');
 
-	it := m.get_begin();
-	it.next();
+	it.prev();
 	m.erase(it);
 	m.erase(it);
-	it.destroy();
 
 	check(m, '1 -2 -1 3 4 5');
-	
+
+	m.insert(it, 0);
+	it.destroy();
+
+	check(m, '1 0 -2 -1 3 4 5');
+
 	m2 := container.create();
 	while not m.empty() do
 		m2.push_back(m.pop_back());
 
 	m.destroy();
 	
-	check(m2, '5 4 3 -1 -2 1');
+	check(m2, '5 4 3 -1 -2 0 1');
 
 	m2.destroy();
 end;
