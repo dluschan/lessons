@@ -85,7 +85,7 @@ implementation
 	constructor container.create();
 	begin
 		m_length := 0;
-		m_capacity := 10;
+		m_capacity := 1;
 		setLength(m_data, m_capacity);
 	end;
 
@@ -127,7 +127,7 @@ implementation
 		end;
 		m_length := m_length + 1;
 
-		for i := m_length downto index + 1 do
+		for i := m_length - 1 downto index + 1 do
 			m_data[i] := m_data[i-1];
 
 		m_data[index] := data;
@@ -138,8 +138,11 @@ implementation
 	procedure container.erase(p: iterator);
 	var
 		index, i: longInt;
+		it: iterator;
 	begin
-		index := p.get_link() - get_begin().get_link();
+		it := get_begin();
+		index := p.get_link() - it.get_link();
+		it.destroy();
 
 		m_length := m_length - 1;
 
