@@ -38,9 +38,16 @@ begin
 
 	memory := getHeapStatus().TotalAllocated;
 	m := container.create();
+	m.push_back(random(1000000));
+	m.push_back(random(1000000));
+	m.destroy();
+	check(getHeapStatus().TotalAllocated - memory);
+
+	memory := getHeapStatus().TotalAllocated;
+	m := container.create();
 	it := m.get_end();
 	m.insert(it, random(1000000));
-	m.insert(it, random(1000000));
+	m.erase(it);
 	it.destroy();
 	m.destroy();
 	check(getHeapStatus().TotalAllocated - memory);
