@@ -50,6 +50,7 @@ interface
 
 			function at(index: longInt): longInt;
 			function empty(): boolean;
+			function size(): longInt;
 
 		private
 			m_begin: iterator;
@@ -225,5 +226,26 @@ implementation
 	function container.empty(): boolean;
 	begin
 		empty := m_begin.equal(m_end);
+	end;
+
+	function container.size(): longInt;
+	var
+		it_begin, it_end: iterator;
+		index: longInt;
+	begin
+		it_begin := get_begin();
+		it_end := get_end();
+		index := 0;
+
+		while not it_begin.equal(it_end) do
+		begin
+			it_begin.next();
+			index := index + 1;
+		end;
+
+		it_begin.destroy();
+		it_end.destroy();
+
+		size := index;
 	end;
 end.

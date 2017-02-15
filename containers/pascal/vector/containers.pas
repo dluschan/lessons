@@ -39,6 +39,7 @@ interface
 
 			function at(index: longInt): longInt;
 			function empty(): boolean;
+			function size(): longInt;
 
 		private
 			m_length: longInt;
@@ -168,5 +169,10 @@ implementation
 	function container.empty(): boolean;
 	begin
 		empty := (m_length = 0);
+	end;
+
+	function container.size(): longInt;
+	begin
+		size := m_length;
 	end;
 end.
