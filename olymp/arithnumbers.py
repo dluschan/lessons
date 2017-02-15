@@ -15,7 +15,7 @@ for a in range(10):
         limits.add(int(seq(a, d, len(l))))
         limits.add(int(seq(a, d, len(r))))
 
-res = 99*(len(r) - len(l) - 1)
+res = max(99*(len(r) - len(l) - 1), 0)
 for limit in limits:
     if int(l) <= limit and limit <= int(r):
         res += 1
