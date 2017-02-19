@@ -8,8 +8,8 @@ interface
 		public
 			constructor create(data: longInt);
 			
-			procedure set_next(link: link);
-			procedure set_prev(link: link);
+			procedure set_next(pLink: link);
+			procedure set_prev(pLink: link);
 
 		private
 			m_data: longInt;
@@ -65,12 +65,12 @@ implementation
 		m_prev := nil;
 	end;
 
-	procedure link.set_next(link: link);
+	procedure link.set_next(pLink: link);
 	begin
 		m_next := link;
 	end;
 
-	procedure link.set_prev(link: link);
+	procedure link.set_prev(pLink: link);
 	begin
 		m_prev := link;
 	end;
