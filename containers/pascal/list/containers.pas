@@ -7,7 +7,8 @@ interface
 		link = class
 		public
 			constructor create(data: longInt);
-			
+			destructor destroy();
+		
 			procedure set_next(pLink: link);
 			procedure set_prev(pLink: link);
 
@@ -20,7 +21,8 @@ interface
 		iterator = class
 		public
 			constructor create(l: link);
-			
+			destructor destroy();
+
 			procedure next();
 			procedure prev();
 			
@@ -37,7 +39,7 @@ interface
 		container = class
 		public
 			constructor create();
-			destructor destroy(); override;
+			destructor destroy();
 			
 			function get_begin(): iterator;
 			function get_end(): iterator;
@@ -65,14 +67,20 @@ implementation
 		m_prev := nil;
 	end;
 
+	destructor link.destroy();
+	begin
+		m_next := nil;
+		m_prev := nil;
+	end;
+	
 	procedure link.set_next(pLink: link);
 	begin
-		m_next := link;
+		m_next := pLink;
 	end;
 
 	procedure link.set_prev(pLink: link);
 	begin
-		m_prev := link;
+		m_prev := pLink;
 	end;
 
 	constructor iterator.create(l: link);
@@ -80,6 +88,11 @@ implementation
 		m_link := l;
 	end;
 
+	destructor iterator.destroy();
+	begin
+		m_link := nil;
+	end;
+	
 	procedure iterator.next();
 	begin
 		m_link := m_link.m_next;
