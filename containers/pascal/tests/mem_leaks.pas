@@ -53,7 +53,14 @@ begin
 	check(getHeapStatus().TotalAllocated - memory);
 
 	memory := getHeapStatus().TotalAllocated;
-	for i := 1 to 100 do
+	m := container.create();
+	for j := 1 to random(1000000) do
+		m.push_back(j);
+	m.destroy();
+	check(getHeapStatus().TotalAllocated - memory);
+
+	memory := getHeapStatus().TotalAllocated;
+	for i := 1 to random(100) do
 	begin
 		m := container.create();
 		for j := 1 to random(1000000) do
