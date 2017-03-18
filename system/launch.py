@@ -7,7 +7,7 @@ srcfile = "tmp.src.txt"
 
 s = ""
 
-for i in range(100):
+for i in range(int(sys.argv[3])):
     os.system("python3 " + generator + " > " + srcfile);
     os.system("python3 " + solver + " < " + srcfile + " > " + outfile)
     s += "Case=test" + str(i+1) + "\n" + "input="
