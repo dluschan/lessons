@@ -1,7 +1,7 @@
 from random import randint
 
-n = randint(1, 100)
-m = randint(1, 100)
+n = randint(1, 30)
+m = randint(1, 30)
 
 print(n, m)
 
