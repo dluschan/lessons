@@ -1,3 +1,3 @@
 from random import randint
 
-print(randint(1, 100))
+print(randint(1, 500))

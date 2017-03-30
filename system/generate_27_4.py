@@ -1,3 +1,3 @@
 import random
 
-print(2 * random.randint(0, 50) + 1)
+print(random.randint(1, 30))
