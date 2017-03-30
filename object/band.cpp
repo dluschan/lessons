@@ -5,10 +5,7 @@
 class Animal
 {
 public:
-	virtual void singing()
-	{
-		std::cout << "la-la-la" << std::endl;
-	}
+	virtual void singing() = 0;
 };
 
 class Dog: public Animal
