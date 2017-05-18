@@ -5,15 +5,17 @@ var
 function sort_digits(s: string): string;
 var
 	i, j: integer;
-	c: char;
+	buf: string;
 begin
 	for i := 1 to length(s) - 1 do
 		for j := i + 1 to length(s) do
 			if copy(s, i, 1) > copy(s, j, 1) then
 			begin
-				c    := s[i];
-				s[i] := s[j];
-				s[j] := c;
+				buf := copy(s, i, 1);
+				delete(s, i, 1);
+				insert(copy(s, j - 1, 1), s, i);
+				delete(s, j, 1);
+				insert(buf, s, j);
 			end;
 	sort_digits := s;
 end;
