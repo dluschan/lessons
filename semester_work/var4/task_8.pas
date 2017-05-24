@@ -23,7 +23,8 @@ end;
 
 procedure filter(a, b: string);
 var
-fin, fout: TextFile;
+	fin, fout: TextFile;
+	s: string;
 begin
 	assign(fin, a);
 	assign(fout, b);

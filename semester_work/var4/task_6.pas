@@ -20,6 +20,7 @@ begin
 			inc(n);
 		readln(f);
 	end;
+	closeFile(f);
 end;
 
 procedure TForm1.btnRunClick(Sender: TObject);
@@ -29,5 +30,5 @@ var
 begin
 	assignFile(f, 'input.txt');
 	calc(f, n);
-	lblOut.Caption := intToStr();
+	lblOut.Caption := intToStr(n);
 end;
