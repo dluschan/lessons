@@ -70,23 +70,36 @@ namespace containers
 		return *--m_end;
 	}
 
-	void vector::insert(vector_iterator p, int x)
+	bool vector::insert(vector_iterator p, int x)
 	{
+        if ((p < m_begin) or (p > m_end)) return false;
+
 		if (m_capacity == m_end)
 		{
-			const int size = m_begin == m_end;
+			const int size = m_end - m_begin;
+
 			int new_size = 3 * size / 2 + 1;
-			int *new_begin = new int[size];
-			while(m_begin < m_end)
+
+			int *new_begin = new int[new_size];
+	    	while(m_begin < m_end)
 				*new_begin++ = *m_begin++;
+			m_begin -= size;
+			new_begin -= size;
 			delete[] m_begin;
 			m_begin = new_begin;
 			m_end = m_begin + size;
 			m_capacity = m_begin + new_size;
 		}
-		for (vector_iterator it = m_end; it > p; --it)
+
+        *m_end = *(m_end-1);
+        m_end++;
+
+		for (vector_iterator it = m_end; it > p; it--)
 			*it = *(it - 1);
-		*p = x;
+
+        *p = x;
+        
+        return true;
 	}
 
 	void vector::erase(vector_iterator p)

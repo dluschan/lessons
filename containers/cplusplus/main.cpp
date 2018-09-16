@@ -8,8 +8,8 @@ int main()
 {
 	containers::vector v;
 
-	unsigned int n;
-	cin>>n;
+	unsigned int n, zero_pos;
+	cin>>n>>zero_pos;
 	cout<<"\n";
 
 	for(int i=0; i<n; i++)
@@ -20,6 +20,7 @@ int main()
 
 	cout<<"\n";
 
+	n+=v.insert(v.begin()+zero_pos, 0);
 	for(int i=0; i<n; i++)
 		cout<<v.pop_back()<<"\n";
 

@@ -25,7 +25,7 @@ namespace containers
 
 		int pop_back();
 
-		void insert(vector_iterator p, int x);
+		bool insert(vector_iterator p, int x);
 
 		void erase(vector_iterator p);
 	};
