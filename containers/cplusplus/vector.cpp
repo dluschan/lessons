@@ -42,11 +42,31 @@ namespace containers
 			m_end = m_begin + size;
 			m_capacity = m_begin + new_size;
 		}
+
 		*m_end++ = x;
 	}
 
 	int vector::pop_back()
 	{
+        if(2 * (m_capacity - m_begin) / 3 >= (m_end - m_begin))
+        {
+            const int size = m_end - m_begin;
+
+            int new_size = (m_capacity - m_end - 1) / 3 + size;
+
+            int *new_begin = new int[new_size];
+            while(m_begin < m_end)
+                *new_begin++ = *m_begin++;
+            new_begin -= size;
+
+            m_begin -= size;
+            delete[] m_begin;
+            
+            m_begin = new_begin;
+            m_end = m_begin + size;
+            m_capacity = m_begin + new_size;
+        }
+
 		return *--m_end;
 	}
 
