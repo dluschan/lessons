@@ -102,10 +102,14 @@ namespace containers
         return true;
 	}
 
-	void vector::erase(vector_iterator p)
+	bool vector::erase(vector_iterator p)
 	{
+        if ((p < m_begin) or (p > m_end)) return false;
+
 		for (vector_iterator it = p; it < m_end; ++it)
 			*it = *(it + 1);
 		--m_end;
+
+        return true;
 	}
 };
