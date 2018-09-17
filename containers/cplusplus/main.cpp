@@ -20,9 +20,10 @@ int main()
 
 	cout<<"\n";
 
-	n+=v.insert(v.begin()+zero_pos, 0);
+	n+=v.insert(v.begin()+zero_pos, 9);
+	//std::cout<<v.begin()<<" "<<v.begin()+zero_pos<<"\n\n";
 	for(int i=0; i<n; i++)
-		cout<<v.pop_back()<<"\n";
+		cout<<v[i]<<"\n";
 
 	return 0;
 }

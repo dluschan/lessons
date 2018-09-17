@@ -26,6 +26,8 @@ namespace containers
 
 	void vector::push_back(int x)
 	{
+		*m_end++ = x;
+
 		if (m_capacity == m_end)
 		{
 			const int size = m_end - m_begin;
@@ -42,8 +44,6 @@ namespace containers
 			m_end = m_begin + size;
 			m_capacity = m_begin + new_size;
 		}
-
-		*m_end++ = x;
 	}
 
 	int vector::pop_back()
@@ -74,6 +74,14 @@ namespace containers
 	{
         if ((p < m_begin) or (p > m_end)) return false;
 
+        *m_end = *(m_end-1);
+        m_end++;
+
+		for (vector_iterator it = m_end-1; it > p; it--)
+			*it = *(it - 1);
+		
+        *p = x;
+
 		if (m_capacity == m_end)
 		{
 			const int size = m_end - m_begin;
@@ -90,21 +98,13 @@ namespace containers
 			m_end = m_begin + size;
 			m_capacity = m_begin + new_size;
 		}
-
-        *m_end = *(m_end-1);
-        m_end++;
-
-		for (vector_iterator it = m_end; it > p; it--)
-			*it = *(it - 1);
-
-        *p = x;
         
         return true;
 	}
 
 	bool vector::erase(vector_iterator p)
 	{
-        if ((p < m_begin) or (p > m_end)) return false;
+        if ((p < m_begin) or (p >= m_end)) return false;
 
 		for (vector_iterator it = p; it < m_end; ++it)
 			*it = *(it + 1);
