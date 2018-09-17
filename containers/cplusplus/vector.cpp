@@ -2,6 +2,29 @@
 
 namespace containers
 {
+	vector::iterator::iterator()
+	{
+		pointer = 0;
+	}
+
+	vector::iterator& vector::iterator::operator=(vector::iterator it)
+	{
+		pointer = it.pointer;
+		return *this;
+	}
+
+	bool vector::iterator::operator!=(vector::iterator it)
+	{
+		return pointer != it.pointer;
+	}
+
+	bool vector::iterator::operator==(vector::iterator it)
+	{
+		return pointer == it.pointer;
+	}
+
+	vector::iterator::~iterator() {}
+
     vector::vector(int n)
 	{
 		m_begin = new int[n];

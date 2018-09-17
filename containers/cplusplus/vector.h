@@ -13,7 +13,26 @@ namespace containers
 		vector_iterator m_capacity;
 
 	public:
-		vector(int n=0);
+
+		class iterator
+		{
+		private:
+			unsigned int *pointer;
+
+			iterator();
+
+		public:
+
+			iterator& operator=(iterator);
+
+			bool operator==(iterator);
+
+			bool operator!=(iterator);
+
+			~iterator();
+		};
+
+		vector(int n=1);
 
 		int operator[](int n);
 
