@@ -7,46 +7,74 @@ namespace containers
 
 	class vector
 	{
+	public:
+		class iterator
+		{
+		friend class vector;
+
+		private:
+			int *pointer;
+
+			iterator();
+
+		public:
+
+			int* operator&();
+
+			iterator& operator=(iterator);
+
+			iterator* operator=(int);
+
+			iterator& operator=(int*);
+
+			iterator& operator+(int);
+
+			iterator& operator-(int);
+
+			iterator& operator++();
+
+			iterator& operator++(int);
+
+			iterator& operator--();
+
+			iterator& operator--(int);
+
+			bool operator==(iterator);
+
+			bool operator!=(iterator);
+
+			bool operator>(iterator);
+
+			bool operator<(iterator);
+
+			bool operator>=(iterator);
+
+			bool operator<=(iterator);
+
+			~iterator();
+		};
+	
 	private:
 		vector_iterator m_begin;
 		vector_iterator m_end;
 		vector_iterator m_capacity;
 
 	public:
-
-		class iterator
-		{
-		private:
-			unsigned int *pointer;
-
-			iterator();
-
-		public:
-
-			iterator& operator=(iterator);
-
-			bool operator==(iterator);
-
-			bool operator!=(iterator);
-
-			~iterator();
-		};
-
 		vector(int n=1);
 
 		int operator[](int n);
 
-		vector_iterator begin();
+		iterator begin();
 
-		vector_iterator end();
+		iterator end();
 
 		void push_back(int x);
 
 		int pop_back();
 
-		bool insert(vector_iterator p, int x);
+		bool insert(iterator p, int x);
 
-		bool erase(vector_iterator p);
+		bool erase(iterator p);
 	};
 };
 

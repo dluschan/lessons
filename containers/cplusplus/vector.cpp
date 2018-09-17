@@ -1,15 +1,69 @@
 #include "vector.h"
+#include <iostream>
 
 namespace containers
 {
 	vector::iterator::iterator()
 	{
-		pointer = 0;
+		pointer = new int;
+	}
+
+	int* vector::iterator::operator&()
+	{
+		return pointer;
 	}
 
 	vector::iterator& vector::iterator::operator=(vector::iterator it)
 	{
 		pointer = it.pointer;
+		return *this;
+	}
+
+	vector::iterator* vector::iterator::operator=(int i)
+	{
+		*pointer = i;
+		return this;
+	}
+
+	vector::iterator& vector::iterator::operator=(int *i)
+	{
+		*pointer = *i;
+		return *this;
+	}
+
+	vector::iterator& vector::iterator::operator+(int i)
+	{
+		pointer += i;
+		return *this;
+	}
+
+	vector::iterator& vector::iterator::operator-(int i)
+	{
+		pointer -= i;
+		return *this;
+	}
+
+	vector::iterator& vector::iterator::operator++()
+	{
+		++pointer;
+		return *this;
+	}
+
+	vector::iterator& vector::iterator::operator++(int)
+	{
+		pointer++;
+		return *this;
+	}
+
+	vector::iterator& vector::iterator::operator--()
+	{
+		--pointer;
+		return *this;
+	}
+
+	vector::iterator& vector::iterator::operator--(int)
+	{
+		pointer--;
 		return *this;
 	}
 
@@ -21,6 +75,26 @@ namespace containers
 	bool vector::iterator::operator==(vector::iterator it)
 	{
 		return pointer == it.pointer;
+	}
+
+	bool vector::iterator::operator>(vector::iterator it)
+	{
+		return pointer > it.pointer;
+	}
+
+	bool vector::iterator::operator<(vector::iterator it)
+	{
+		return pointer < it.pointer;
+	}
+
+	bool vector::iterator::operator>=(vector::iterator it)
+	{
+		return pointer >= it.pointer;
+	}
+
+	bool vector::iterator::operator<=(vector::iterator it)
+	{
+		return pointer <= it.pointer;
 	}
 
 	vector::iterator::~iterator() {}
@@ -37,14 +111,18 @@ namespace containers
 		return m_begin[n];
 	}
 
-	vector_iterator vector::begin()
+	vector::iterator vector::begin()
 	{
-		return m_begin;
+		iterator it;
+		it.pointer = m_begin;
+		return it;
 	}
 	
-    vector_iterator vector::end()
+    vector::iterator vector::end()
 	{
-		return m_end;
+		iterator it;
+		it.pointer = m_end;
+		return it;
 	}
 
 	void vector::push_back(int x)
@@ -93,17 +171,19 @@ namespace containers
 		return *--m_end;
 	}
 
-	bool vector::insert(vector_iterator p, int x)
+	bool vector::insert(vector::iterator p, int x)
 	{
-        if ((p < m_begin) or (p > m_end)) return false;
+        if ((p < begin()) or (p > end())) return false;
 
         *m_end = *(m_end-1);
         m_end++;
 
-		for (vector_iterator it = m_end-1; it > p; it--)
-			*it = *(it - 1);
-		
-        *p = x;
+		for (vector::iterator it = end() - 1; it > p; it--)
+			it = *(&it - 1);
+
+        p = x;
+
+		//if(p == end()) m_end++;
 
 		if (m_capacity == m_end)
 		{
@@ -125,12 +205,12 @@ namespace containers
         return true;
 	}
 
-	bool vector::erase(vector_iterator p)
+	bool vector::erase(vector::iterator p)
 	{
-        if ((p < m_begin) or (p >= m_end)) return false;
+        if ((p < begin()) or (p >= end())) return false;
 
-		for (vector_iterator it = p; it < m_end; ++it)
-			*it = *(it + 1);
+		for (vector::iterator it = p; it < end(); ++it)
+			it = *(&it + 1);
 		--m_end;
 
         return true;
