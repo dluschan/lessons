@@ -22,8 +22,10 @@ int main()
 
 	//n+=v.insert(v.begin() + zero_pos, 9);
 	//std::cout<<v.begin()<<" "<<v.begin()+zero_pos<<"\n\n";
-	n-=v.erase(v.begin()+zero_pos);
-	n+=v.insert(v.begin()+zero_pos, 9);
+	containers::vector::iterator i = v.erase(v.begin()+zero_pos);
+	//v.insert(v.begin()+zero_pos, 9);
+	std::cout<<&i<<" : "<<&(v.begin() + zero_pos)<<"\n";
+
 	for(containers::vector::iterator it = v.begin(); it < v.end(); it++)
 		cout<<*&it<<"\n";
 

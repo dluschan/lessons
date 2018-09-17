@@ -171,9 +171,13 @@ namespace containers
 		return *--m_end;
 	}
 
-	bool vector::insert(vector::iterator p, int x)
+	vector::iterator vector::insert(vector::iterator p, int x)
 	{
-        if ((p < begin()) or (p > end())) return false;
+        if ((p < begin()) or (p > end()))
+		{
+			iterator it = end();
+			return it;
+		}
 
         *m_end = *(m_end-1);
         m_end++;
@@ -182,8 +186,6 @@ namespace containers
 			it = *(&it - 1);
 
         p = x;
-
-		//if(p == end()) m_end++;
 
 		if (m_capacity == m_end)
 		{
@@ -202,17 +204,17 @@ namespace containers
 			m_capacity = m_begin + new_size;
 		}
         
-        return true;
+        return p;
 	}
 
-	bool vector::erase(vector::iterator p)
+	vector::iterator vector::erase(vector::iterator p)
 	{
-        if ((p < begin()) or (p >= end())) return false;
+        if ((p < begin()) or (p >= end())) return end();
 
 		for (vector::iterator it = p; it < end(); ++it)
 			it = *(&it + 1);
 		--m_end;
 
-        return true;
+        return p;
 	}
 };

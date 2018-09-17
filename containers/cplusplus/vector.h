@@ -72,9 +72,9 @@ namespace containers
 
 		int pop_back();
 
-		bool insert(iterator p, int x);
+		iterator insert(iterator p, int x);
 
-		bool erase(iterator p);
+		iterator erase(iterator p);
 	};
 };
 
