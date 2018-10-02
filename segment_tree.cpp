@@ -26,7 +26,7 @@ public:
         return query(0, 0, act_size, from, to);
     }
 
-    void setAt(int ind, int value) {
+    void setAt(int ind, T value) {
         modify(0, 0, act_size, ind, value);
     }
 private:
