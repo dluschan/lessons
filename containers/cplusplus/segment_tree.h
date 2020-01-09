@@ -1,57 +1,77 @@
 #include <vector>
 #include <valarray>
 
+template<typename T, typename BinaryOperator>
 class SegmentTree
 {
 public:
-	SegmentTree(const std::vector<int>&);
-	int operator[](const std::slice&);
-	
+	SegmentTree(const std::vector<T>& data, BinaryOperator fun, T zero = T());
+	T operator[](const std::slice&);
+
 private:
-	int get(int k, int a, int b, int l, int r);
-	std::vector<int> data;
+	T get(size_t from, size_t to, size_t root, size_t left, size_t right);
+
+	size_t left_child(size_t k) const
+	{
+		return 2*k;
+	}
+
+	size_t right_child(size_t k) const
+	{
+		return 2*k + 1;
+	}
+
+	size_t parent(size_t k) const
+	{
+		return (k - 1) / 2;
+	}
+
+	std::vector<T> m_data;
+	BinaryOperator m_fun;
+	size_t m_size;
 };
 
-SegmentTree::SegmentTree(const std::vector<int>& a)
+template<typename T, typename BinaryOperator>
+SegmentTree<T, BinaryOperator>::SegmentTree(const std::vector<T>& data, BinaryOperator fun, T zero)
+	: m_fun(fun)
 {
-	const int inf = std::numeric_limits<int>::max();
-	int n = int(exp2(ceil(log2(a.size()))));
-	data = std::vector<int>(2*n, inf);
-	for (int i = n; i < n + a.size(); ++i)
-		data[i] = a[i - n];
-	for (int i = n - 1; i != 0; --i)
-		data[i] = std::min(data[2*i], data[2*i + 1]);
-	for (auto x : data)
-		std::cout << x << ' ';
-	std::cout << std::endl;
+	m_size = 1;
+	while (m_size < data.size())
+		m_size *= 2;
+	m_data = std::vector<T>(2 * m_size, zero);
+	for (size_t i = m_size; i < m_size + data.size(); ++i)
+		m_data[i] = data[i - m_size];
+	for (size_t i = m_size - 1; i != 0; --i)
+		m_data[i] = m_fun(m_data[left_child(i)], m_data[right_child(i)]);
 }
 
-int SegmentTree::operator[](const std::slice& a)
+template<typename T, typename BinaryOperator>
+T SegmentTree<T, BinaryOperator>::operator[](const std::slice& a)
 {
-	return get(1, 0, data.size() / 2, a.start(), a.start() + a.size());
+	return get(a.start(), a.start() + a.size(), 1, 0, m_size);
 }
 
-int SegmentTree::get(int k, int a, int b, int l, int r)
+template<typename T, typename BinaryOperator>
+T SegmentTree<T, BinaryOperator>::get(size_t from, size_t to, size_t root, size_t left, size_t right)
 {
-	if (a == l && b == r)
+	if (from == left && to == right)
 	{
-		return data[k];
+		return m_data[root];
 	}
 	else
 	{
-		int mid = (a + b) / 2;
-		if (r <= mid)
+		size_t mid = (left + right) / 2;
+		if (to <= mid)
 		{
-			return get(2*k, a, mid, l, r);
+			return get(from, to, left_child(root), left, mid);
 		}
-		else if (l >= mid)
+		else if (from >= mid)
 		{
-			return get(2*k+1, mid, b, l, r);
+			return get(from, to, right_child(root), mid, right);
 		}
 		else
 		{
-			return std::min(get(2*k, a, mid, l, mid), get(2*k+1, mid, b, mid, r));
+			return m_fun(get(from, mid, left_child(root), left, mid), get(mid, to, right_child(root), mid, right));
 		}
 	}
 }
-
